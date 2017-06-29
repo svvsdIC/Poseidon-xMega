@@ -124,31 +124,19 @@ void timer_counter_C0_C1_init(uint16_t topcount) {
     // Timer Counters 0 and 1 should now be set up on PORTC
 }
 void timer_counter_D0_init(uint16_t topcount) {
-	//
-	// This routine initializes the timer counters on PORT C to support driving
-	// Electronic Speed Controllers (ESCs) via the single slope PWM operating mode
-	//
-	// From the XMEGA data sheet, to make the waveform visible on the
-	// connected port pin, the following requirements must be fulfilled
-	// 1. A waveform generation mode must be selected.
-	// 2. Event actions must be disabled.
-	// 3. The CC channels used must be enabled. This will override the
-	//        corresponding port pin output register.
-	// 4. The direction for the associated port pin must be set to output.
-	// ...so, let's do it...
-	// Set the data direction register for the PORT C PWM pins.
+	// Set the data direction register for the PORT D PWM pins.
 	// Output register pins for servos are D0 to D2, set to output:
 	PORTD_DIR=0b00000111;
 	//
 	// Set the clock prescaler to 64.  From table 14-3:
-	TCC0_CTRLA = 0b00000101;
+	TCD0_CTRLA = 0b00000101;
 	//
 	// Enable the compare enable functions: See 14.12.2
 	// Set WGM=0b011, which is single slope PWM.  See 14.12.2
-	TCC0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | 0b00000011;
+	TCD0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | 0b00000011;
 	//
 	// Ensure event actions are turned OFF
-	TCC0_CTRLD = 0b00000000 | 0b00000000;
+	TCD0_CTRLD = 0b00000000 | 0b00000000;
 	//
 	// Nothing to set in TCCx control registers C, and E.
 	//
@@ -159,7 +147,7 @@ void timer_counter_D0_init(uint16_t topcount) {
 	// This is a 16 bit register, so we should block interrupts when
 	// writing to it, but interrupts should not yet be enabled...
 	//
-	TCC0_PER = topcount;
+	TCD0_PER = topcount;
 	//
 	// We now need to set the output compare registers to a value that will
 	// prevent the motors from spinning.  To do this. we need calibrated values
@@ -168,9 +156,9 @@ void timer_counter_D0_init(uint16_t topcount) {
 	// Again, we should write these after disabling interrupts, but since this
 	// should run BEFORE interrupts are enabled, we should be OK.
 	// Servos
-	TCC0_CCA = servo_1_neutral_setting;
-	TCC0_CCB = servo_2_neutral_setting;
-	TCC0_CCC = servo_3_neutral_setting;
+	TCD0_CCA = servo_1_neutral_setting;
+	TCD0_CCB = servo_2_neutral_setting;
+	TCD0_CCC = servo_3_neutral_setting;
 	//
 	// Timer Counter 0 should now be set up on PORTD
 }
