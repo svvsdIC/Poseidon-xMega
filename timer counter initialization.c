@@ -38,12 +38,17 @@
 #define ESC_TOP_COUNT F_CPU/(ESC_FREQ*ESC_PRESCALER)-1  //See eqn. on pg 172/173
 // At 32MHz, our 20mS period is 10,000 clocks, so 1mS=500, 2mS=1000;
 
+// Light frequency is going to be 400 Hz, prescalar is 8
+#define LIGHT_FREQ 400UL // This is the lowest frequency we could get that was still above 240 Hz
+#define LIGHT_PRESCALER 8UL
+#define TOP_COUNT_LIGHTS F_CPU/(LIGHT_FREQ*LIGHT_PRESCALER)-1
+
 
 /********************************************************************************
                         Function Prototypes
 ********************************************************************************/
 void timer_counter_C0_C1_init(uint16_t topcount);
-void timer_counter_D0_init(uint16_t topcount);
+void timer_counter_F0_init(uint16_t topcount);
 
 /********************************************************************************
                         Global Variables
@@ -62,10 +67,15 @@ uint16_t servo_1_neutral_setting = 1.5*(ESC_TOP_COUNT+1)/20;
 uint16_t servo_2_neutral_setting = 1.5*(ESC_TOP_COUNT+1)/20;
 uint16_t servo_3_neutral_setting = 1.5*(ESC_TOP_COUNT+1)/20;
 
+// Clock counts for RGB lights
+uint16_t light_lowest_setting = 4*(TOP_COUNT_LIGHTS+1)/20;
+uint16_t light_middle_setting = 10*(TOP_COUNT_LIGHTS+1)/20;
+uint16_t light_highest_setting = 19.8*(TOP_COUNT_LIGHTS+1)/20;
+
 /********************************************************************************
                         Functions
 ********************************************************************************/
-void timer_counter_C0_C1_init(uint16_t topcount) {
+void timer_counter_C0_C1_D0_init(uint16_t topcount) {
     //
     // This routine initializes the timer counters on PORT C to support driving
     // Electronic Speed Controllers (ESCs) via the single slope PWM operating mode
@@ -81,25 +91,31 @@ void timer_counter_C0_C1_init(uint16_t topcount) {
     // Set the data direction register for the PORT C PWM pins.
     // The output register pins are c0 through C5, set them to output:
     PORTC_DIR=0b00111111;
+	PORTD_DIR=0b00000111;
     //
     // Set the clock prescaler to 64.  From table 14-3:
     TCC0_CTRLA = 0b00000101;
     TCC1_CTRLA = 0b00000101;
+	TCD0_CTRLA = 0b00000101;
     //
     // Enable the compare enable functions: See 14.12.2
     // Set WGM=0b011, which is single slope PWM.  See 14.12.2
     TCC0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | 0b00000011;
     TCC1_CTRLB = TC1_CCAEN_bm | TC1_CCBEN_bm | 0b00000011;
+	TCD0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | 0b00000011;
     //
     // Ensure event actions are turned OFF
     TCC0_CTRLD = 0b00000000 | 0b00000000;
     TCC1_CTRLD = 0b00000000 | 0b00000000;
+	TCD0_CTRLD = 0b00000000 | 0b00000000;
     //
     // Nothing to set in TCCx control registers C, and E.
     //
     // Ensure timer/counters are enabled for port C (See 8.7.3)
     ClearBit(PR_PRPC, PR_TC0_bp);
     ClearBit(PR_PRPC, PR_TC1_bp);
+	// Make timer/counters for servos on port D
+	ClearBit(PR_PRPD, PR_TC0_bp);
     //
     // Set the TOP count in the Input Compare Register PER registers
     // This is a 16 bit register, so we should block interrupts when
@@ -107,6 +123,7 @@ void timer_counter_C0_C1_init(uint16_t topcount) {
     //
     TCC1_PER = topcount;
     TCC0_PER = topcount;
+	TCD0_PER = topcount;
     //
     // We now need to set the output compare registers to a value that will
     // prevent the motors from spinning.  To do this. we need calibrated values
@@ -120,34 +137,50 @@ void timer_counter_C0_C1_init(uint16_t topcount) {
     TCC0_CCD = motor_4_neutral_setting;
     TCC1_CCA = motor_5_neutral_setting;
     TCC1_CCB = motor_6_neutral_setting;
+	// Servos
+	TCD0_CCA = servo_1_neutral_setting;
+	TCD0_CCB = servo_2_neutral_setting;
+	TCD0_CCC = servo_3_neutral_setting;
     //
     // Timer Counters 0 and 1 should now be set up on PORTC
 }
-void timer_counter_D0_init(uint16_t topcount) {
-	// Set the data direction register for the PORT D PWM pins.
-	// Output register pins for servos are D0 to D2, set to output:
-	PORTD_DIR=0b00000111;
+void timer_counter_F0_init(uint16_t topcount) {*********************************************************888
+	//
+	// This routine initializes the timer counters on PORT C to support driving
+	// Electronic Speed Controllers (ESCs) via the single slope PWM operating mode
+	//
+	// From the XMEGA data sheet, to make the waveform visible on the
+	// connected port pin, the following requirements must be fulfilled
+	// 1. A waveform generation mode must be selected.
+	// 2. Event actions must be disabled.
+	// 3. The CC channels used must be enabled. This will override the
+	//        corresponding port pin output register.
+	// 4. The direction for the associated port pin must be set to output.
+	// ...so, let's do it...
+	// Set the data direction register for the PORT C PWM pins.
+	// The output register pins are c0 through C5, set them to output:
+	PORTF_DIR=0b00000111;
 	//
 	// Set the clock prescaler to 64.  From table 14-3:
-	TCD0_CTRLA = 0b00000101;
+	TCF0_CTRLA = 0b00000100;
 	//
 	// Enable the compare enable functions: See 14.12.2
 	// Set WGM=0b011, which is single slope PWM.  See 14.12.2
-	TCD0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | 0b00000011;
+	TCF0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | 0b00000011;
 	//
 	// Ensure event actions are turned OFF
-	TCD0_CTRLD = 0b00000000 | 0b00000000;
+	TCF0_CTRLD = 0b00000000 | 0b00000000;
 	//
 	// Nothing to set in TCCx control registers C, and E.
 	//
-	// Make timer/counters for servos on port D
-	ClearBit(PR_PRPD, PR_TC0_bp);
+	// Ensure timer/counters are enabled for port C (See 8.7.3)
+	ClearBit(PR_PRPF, PR_TC0_bp);
 	//
 	// Set the TOP count in the Input Compare Register PER registers
 	// This is a 16 bit register, so we should block interrupts when
 	// writing to it, but interrupts should not yet be enabled...
 	//
-	TCD0_PER = topcount;
+	TCF0_PER = topcount;
 	//
 	// We now need to set the output compare registers to a value that will
 	// prevent the motors from spinning.  To do this. we need calibrated values
@@ -155,12 +188,15 @@ void timer_counter_D0_init(uint16_t topcount) {
 	// defaults calculated in the global variables above.
 	// Again, we should write these after disabling interrupts, but since this
 	// should run BEFORE interrupts are enabled, we should be OK.
-	// Servos
-	TCD0_CCA = servo_1_neutral_setting;
-	TCD0_CCB = servo_2_neutral_setting;
-	TCD0_CCC = servo_3_neutral_setting;
+	
+	// We are assigning only one of each setting to each pin, however
+	// the structure will have to be altered later so that each pin can access
+	// each setting.
+	TCF0_CCA = light_lowest_setting;
+	TCF0_CCB = light_middle_setting;
+	TCF0_CCC = light_highest_setting;
 	//
-	// Timer Counter 0 should now be set up on PORTD
+	// Timer Counters 0 and 1 should now be set up on PORTC
 }
 
 void system_clock_init(void) {
@@ -244,8 +280,7 @@ int main(void) {
     _delay_ms(100);
     }
     // Initialize timer counters...
-    timer_counter_C0_C1_init(ESC_TOP_COUNT);
-	timer_counter_D0_init(ESC_TOP_COUNT);
+    timer_counter_C0_C1_D0_init(ESC_TOP_COUNT);
     //    
     // *************************************************************************
     // main loop
