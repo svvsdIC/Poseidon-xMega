@@ -31,17 +31,38 @@
                         Global Variables
 ********************************************************************************/
 void USART_init(){
+	PORTE_DIR = 0b00001000;
+	// Sets the BAUD speed of USART connection
+	// Port A: bits 0-2, 7
+	SetBit(USARTE0_BAUDCTRLA, USART_BSEL0_bp);
+	SetBit(USARTE0_BAUDCTRLA, USART_BSEL1_bp);
+	SetBit(USARTE0_BAUDCTRLA, USART_BSEL2_bp);
+	SetBit(USARTE0_BAUDCTRLA, USART_BSEL7_bp);
+	// Port B: bits 5-7
+	SetBit(USARTE0_BAUDCTRLB, USART_BSCALE1_bp);
+	SetBit(USARTE0_BAUDCTRLB, USART_BSCALE2_bp);
+	SetBit(USARTE0_BAUDCTRLB, USART_BSCALE3_bp);
+	// Stop Registers - medium setting on pins 2 and 3
+	USARTE0_CTRLA = USART_TXCINTLVL_MED_gc;  
+	// Enables Receiver and transmitter on port B
+	SetBit(USARTE0_CTRLB, USART_RXEN_bp);
+	SetBit(USARTE0_CTRLB, USART_TXEN_bp);
+	// Sets communication mode to asynchronous, parity to 0, stop bit to 2, data length to 8bits
+	SetBit(USARTE0_CTRLC, USART_SBMODE_bp);
+	USARTE0_CTRLC = USART_CMODE_ASYNCHRONOUS_gc | USART_PMODE_DISABLED_gc;
+	/*
 	//enable port E USART pins as output
-	PORTE_DIR = 0b00001100;
+	PORTE_DIR = 0b00001000;
 	// BAUD CTRL A & B sets the BAUD speed of USART connection
 	USARTE0_BAUDCTRLB = 0b11100000;
 	USARTE0_BAUDCTRLA = 0b10000111;
 	// stop registers
-	USARTE0_CTRLA = 0b10; // NEED HELP HERE
+	USARTE0_CTRLA = 0b10;
 	//enables receiver and transmitter
 	USARTE0_CTRLB = 0b00011000;
-	//sets communication mode to asynchronous, parity to whatever the Pi team needs and stop bit to 2, with Data length to 8bits
+	//sets communication mode to asynchronous, no parity and stop bit to 2, with Data length to 8bits
 	USARTE0_CTRLC = 0b00001011
+	*/
 }
 void system_clock_init(void) {
     //*****************************************************************************************
