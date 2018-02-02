@@ -16,6 +16,7 @@ Created: 1/25/18
 #define DO_load_cal "Import"
 #define DO_toggle_LED "L"
 #define DO_status "Status"
+uint8_t DO_data_collection[6];
 // Calibration
 #define DO_cal "Cal"
 #define DO_pressure "P"

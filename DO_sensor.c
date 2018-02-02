@@ -21,14 +21,38 @@ Created: 1/25/18
 void DO_calibration(void)
 {
 	// a. Factory reset
+	char TWIEsendBuffer[7] = DO_factory_reset; 
 	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],7,0);
+	_delay_ms(600); 
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],0,6);
+	if(twiMaster.readData[0] == 1)
+	{
+		for(int i = 0, i < 6, i++)
+			DO_data_collection[i] = twiMaster.readData[i];
+	}
+	else
+	{
+		// Error condition
+		int error = 0;
+		printf("%d \n", error)
+	}
+	
+	while (!(twiMaster.status == TWIM_STATUS_READY)) {}
+		
 	// b. Check device info to verify communication
-	// c. Check device status and verify correct voltage
+		
+	// c. Check device status and verify correct voltage 
+	/**/
+	
 	// d. Calibrate (w/ 60s wait)
+	/**/
+	
 	// e. IF REQUIRED Cal,0 procedure
+	/**/
+	
 	// f. Read cal. parameters
 }
 	
-void DO_initialization(void){}
-void DO_compensation(void){}
-void DO_read(void){}
+uint8_t DO_initialization(void) {}
+uint8_t DO_compensation(void) {}
+uint8_t DO_read(void) {}
