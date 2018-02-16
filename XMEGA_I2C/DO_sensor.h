@@ -38,10 +38,11 @@ uint8_t DO_data_collection[6];
 #define DO_sleep "Sleep"
 
 // Function Prototypes
-void DO_calibration(void);
-uint8_t DO_initialization(void);
-uint8_t DO_compensation(void);
-uint8_t DO_read(void);
+void DO_initialization(void);
+// uint8_t DO_calibration(void);
+// uint8_t DO_compensation(void);
+// uint8_t DO_read(void);
+
 
 
 

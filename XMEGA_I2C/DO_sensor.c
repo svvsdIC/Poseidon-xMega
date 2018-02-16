@@ -21,13 +21,17 @@
 /********************************************************************************
 						Functions
 ********************************************************************************/
-void DO_calibration(void)
+void DO_initialization(void)
 {
 	// a. Factory reset
-	uint8_t TWIEsendBuffer[7] = DO_factory_reset; 
+	strncpy(TWIEsendBuffer[0], DO_factory_reset, 7); // Need to debug strncpy
 	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],7,0);
 	_delay_ms(600); 
-	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],0,6);
+	strncpy(TWIEsendBuffer[0], DO_read_device_info, 1);
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],1,0);
+	_delay_ms(300);
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0], 0, 14);
+	_delay_ms(300);
 	if(twiMaster.readData[0] == 1)
 	{
 		for(int i = 0; i < 6; i++)
@@ -58,6 +62,6 @@ void DO_calibration(void)
 	// f. Read cal. parameters
 }
 	
-/*uint8_t DO_initialization(void) {}
+/*uint8_t DO_calibration(void) {}
 uint8_t DO_compensation(void) {}
 uint8_t DO_read(void) {}*/
