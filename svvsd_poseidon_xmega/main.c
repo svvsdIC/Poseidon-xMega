@@ -12,7 +12,8 @@
  * Author : Snoopy Brown
  *
  *****************************************************************************/
-#define F_CPU 32000000UL		// set CPU variable so delays are correct
+// The following line has been moved into the compiler symbols (Project->properties->toolchain)
+//#define F_CPU 32000000UL		// set CPU variable so delays are correct
 /********************************************************************************
 						Includes
 ********************************************************************************/
@@ -84,8 +85,8 @@ int main(void)
 	
 	// enable global interrupts
 	sei();
-	// Now set up the RGB sensor
-	xmega_RGBsensor_init();
+	// Now set up the RGB sensor (Used for debug)
+	// xmega_RGBsensor_init();
 	// If we survived that, we're ready for the main loop
 	
 	//but first some UART set up
@@ -116,12 +117,6 @@ int main(void)
 	// *************************************************************************
 	while (1) 
 	{
-		// The next few lines test the RGB I2C Sensor read: uncomment to test
-//		TWI_XFER_STATUS = xmega_read_RGB_values();
-		// This next line provides a breakpoint for watching the RGB values
-//		temp1 = temp1+1;
-		// End of RGB sensor read
-		
 		// The next few lines test the UART interface.  Uncomment the UARTE0 line below to test.
 		// Echo the received character:  with a terminal window open on your PC,
 		// you should see everything you type echoed back to the terminal window
