@@ -26,11 +26,14 @@ Created: 1/25/18
 #define DO_save_cal "Export"
 #define DO_load_cal "Import"
 #define DO_toggle_LED "L"
+#define DO_LED_OFF "L,0"
+#define DO_LED_ON "L,1"
 #define DO_enable_saturation "O,%,1"
 #define DO_status "Status"
 uint8_t DO_data_collection[6];
 // Calibration
 #define DO_cal "Cal"
+#define DO_cal_zero "Cal,0"
 #define DO_pressure "P"
 #define DO_salinity "S"
 #define DO_temp "T"
