@@ -26,6 +26,7 @@ Created: 1/25/18
 #define DO_save_cal "Export"
 #define DO_load_cal "Import"
 #define DO_toggle_LED "L"
+#define DO_enable_saturation "O,%,1"
 #define DO_status "Status"
 uint8_t DO_data_collection[6];
 // Calibration

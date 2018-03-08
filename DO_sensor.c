@@ -25,9 +25,10 @@
 void DO_initialization(void)
 {
 	// a. Factory reset
-	strncpy(TWIEsendBuffer[0], DO_factory_reset, 7);
+	strncpy(&TWIEsendBuffer[0], &DO_factory_reset, 7);
 	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],7,0);
 	_delay_ms(600); 
+	// b. Check device info to verify communication
 	strncpy(TWIEsendBuffer[0], DO_read_device_info, 1);
 	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],1,0);
 	_delay_ms(300);
@@ -49,17 +50,73 @@ void DO_initialization(void)
 	
 	while (!(twiMaster.status == TWIM_STATUS_READY)) {}
 		
-	// b. Check device info to verify communication
-		
+// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Not yet troubleshooted %%%%%%%%%%%%%%%%%%%%%%%%%%%5
 	// c. Check device status and verify correct voltage 
-	/**/
+	strncpy(&TWIEsendBuffer[0], &DO_status, 6);
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],6,0);
+	_delay_ms(300);
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],0,17);
+	_delay_ms(300);
+	if(twiMaster.readData[0] == 1)
+	{
+		for(int i = 0; i < 6; i++)
+		{
+			DO_data_collection[i] = twiMaster.readData[i];
+		}
+	}
+	else
+	{
+		// Error condition
+		int error = 0;
+		printf("%d \n", error);
+	}
+	// Verify correct voltage?
+	while (!(twiMaster.status == TWIM_STATUS_READY)) {}
+		
+	// d. Import saved calibration
+	strncpy(&TWIEsendBuffer[0], &DO_load_cal, 6);
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],6,0);
+	_delay_ms(300);
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],0,250); // Ask about large amount of bytes
+	_delay_ms(300);
+	if(twiMaster.readData[0] == 1)
+	{
+		for(int i = 0; i < 6; i++)
+		{
+			DO_data_collection[i] = twiMaster.readData[i];
+		}
+	}
+	else
+	{
+		// Error condition
+		int error = 0;
+		printf("%d \n", error);
+	}
+	// Verify correct voltage?
+	while (!(twiMaster.status == TWIM_STATUS_READY)) {}
 	
-	// d. Calibrate (w/ 60s wait)
-	/**/
-	
-	// e. IF REQUIRED Cal,0 procedure
-	/**/
-	
+	// e. Enable %saturation output
+	strncpy(&TWIEsendBuffer[0], &DO_enable_saturation, 6);
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],6,0);
+	_delay_ms(300);
+	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],0,17);
+	_delay_ms(300);
+	if(twiMaster.readData[0] == 1)
+	{
+		for(int i = 0; i < 6; i++)
+		{
+			DO_data_collection[i] = twiMaster.readData[i];
+		}
+	}
+	else
+	{
+		// Error condition
+		int error = 0;
+		printf("%d \n", error);
+	}
+	// Verify correct voltage?
+	while (!(twiMaster.status == TWIM_STATUS_READY)) {}
+		
 	// f. Read cal. parameters
 }
 	
