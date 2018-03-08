@@ -35,6 +35,7 @@
 volatile unsigned char temp1;
 //Test string to verify UART is working
 char String[]="Hello World!! The serial port is working!";
+char DOdata[32];
 // This next line opens a virtual file that writes to the serial port
 static FILE mystdout = FDEV_SETUP_STREAM(USARTE0_Transmit_IO, NULL, _FDEV_SETUP_WRITE);
 extern uint8_t ItsTime;
@@ -85,7 +86,15 @@ int main(void)
 	
 	// enable global interrupts
 	sei();
-	// Now set up the RGB sensor (Used for debug)
+	//
+	// Initialize the fake sensors used to drive the PI interface
+	DO_init();
+	//
+	// Test read the DO sensor
+	DO_read(DOdata);
+	printf("%s", DOdata);
+	//
+	// Now set up the RGB sensor
 	// xmega_RGBsensor_init();
 	// If we survived that, we're ready for the main loop
 	
