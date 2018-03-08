@@ -6,10 +6,11 @@
  * Each call updates the current value.  Suggest calling this routine once per 
  * second.
  *
- * Created:3/8/2018 7:20:50 PM
+ * Created:3/8/2018 2:50:50 PM
  * Author : Craig / Zach
 ********************************************************************************/
-
+#ifndef FAKESENSOR1_H_
+#define FAKESENSOR1_H_
 /********************************************************************************
 						Includes
 ********************************************************************************/
@@ -26,43 +27,13 @@
 /********************************************************************************
 						Global Variables
 ********************************************************************************/
-float WQDO, WQDOP, delta;
-char DO_string[32];
 
 /********************************************************************************
 						Function Prototypes
 ********************************************************************************/
+//  Initialize the fake sensor initial readings and slope
+void DO_init(void);
+// Return a string for each sensor reading.  The string should be 32 characters.
+void DO_read(char* DO_string);
 
-/********************************************************************************
-						Functions
-********************************************************************************/
-
-void DO_init(void) {
-	WQDO = 6.0;
-	WQDOP = 100.0 * WQDO / 9.0;
-	delta = -0.3;
-}
-
-void DO_read(char* DO_string) {
-	// if we're beyond our chosen boundaries, switch direction
-	if (WQDO > 8.0) {
-			delta = -0.13;
-		} else if (WQDO < 4) {
-			delta = +0.17;
-		} else {}
-	// update our data
-	WQDO = WQDO + delta;
-	WQDOP = 100.0 * WQDO / 9.0;
-	// write our data to an output string...
-	// String: "DO, x.xx mg/L, yy.y%"
-	sprintf(DO_string, "DO %4.1f mg/L, %4.1f%% Sat", WQDO, WQDOP);
-	// and return
-}
-
-
-/********************************************************************************
-*********************************************************************************
-						Interrupt Service Routines
-*********************************************************************************
-********************************************************************************/
-
+#endif /* FAKESENSOR1_H_ */

@@ -145,6 +145,9 @@
     <Compile Include="FakeSensor1.c">
       <SubType>compile</SubType>
     </Compile>
+    <Compile Include="FakeSensor1.h">
+      <SubType>compile</SubType>
+    </Compile>
     <Compile Include="gpio.c">
       <SubType>compile</SubType>
     </Compile>
