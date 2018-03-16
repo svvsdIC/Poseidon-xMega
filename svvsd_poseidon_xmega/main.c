@@ -101,7 +101,10 @@ int main(void)
 	// Interrupts should be good now -----------------------------------
 	
 	//Now send our fixed string message via USART call
-	USARTE0_putstring(String);
+//	USARTE0_putstring(String);
+	
+	// Call DO sensor init function
+	DO_initialization();
 	
 	// Send another text message via our std out using printf
 	printf("Hi, again, world.\n");
