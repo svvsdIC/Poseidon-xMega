@@ -53,9 +53,12 @@ void DO_read(char* DO_string) {
 	// update our data
 	WQDO = WQDO + delta;
 	WQDOP = 100.0 * WQDO / 9.0;
+	int wqdo = WQDO * 1000;
+	int wqdop = WQDOP * 1000;
 	// write our data to an output string...
 	// String: "DO, x.xx mg/L, yy.y%"
-	sprintf(DO_string, "DO %4.1f mg/L, %4.1f%% Sat", WQDO, WQDOP);
+	//sprintf(DO_string, "DO %4.1f mg/L, %4.1f%% Sat", WQDO, WQDOP);
+	sprintf(DO_string, "DO %i mg/L, %i%% Sat\n", wqdo, wqdop);
 	// and return
 }
 

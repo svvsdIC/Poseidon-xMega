@@ -91,8 +91,10 @@ int main(void)
 	DO_init();
 	//
 	// Test read the DO sensor
-	DO_read(DOdata);
-	printf("%s", DOdata);
+	for(int i=0; i < 10; i++){
+		DO_read(DOdata);
+		printf("%s", DOdata);	
+	}
 	//
 	// Now set up the RGB sensor
 	// xmega_RGBsensor_init();
@@ -110,16 +112,16 @@ int main(void)
 	// Interrupts should be good now -----------------------------------
 	
 	//Now send our fixed string message via USART call
-	USARTE0_putstring(String);
+	//USARTE0_putstring(String);
 	
 	// Send another text message via our std out using printf
-	printf("Hi, again, world.\n");
+	//printf("Hi, again, world.\n");
 	
 	//Now try to write debug data to the computer
-	printf("\nunsigned int = %u", u16data);
+	/*printf("\nunsigned int = %u", u16data);
 	for(uint8_t i=0; i<11; i++) {
 		printf("\ni = %u", i);
-	}
+	}*/
 	
 	// *************************************************************************
 	// main loop
