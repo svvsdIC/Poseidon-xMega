@@ -52,7 +52,7 @@ extern uint8_t ItsTime;
 int main(void)
 {
 	// DEBUG: Provide some data to print out...(erase these lines when done testing)
-	uint16_t u16data = 10;
+	//uint16_t u16data = 10;
 	
 	// Set up the serial interface output file (to computer)
 	stdout = &mystdout;
@@ -91,10 +91,6 @@ int main(void)
 	DO_init();
 	//
 	// Test read the DO sensor
-	for(int i=0; i < 10; i++){
-		DO_read(DOdata);
-		printf("%s", DOdata);	
-	}
 	//
 	// Now set up the RGB sensor
 	// xmega_RGBsensor_init();
@@ -128,10 +124,16 @@ int main(void)
 	// *************************************************************************
 	while (1) 
 	{
+		if(ItsTime == 1){ //wait for our 1Hz flag
+			ItsTime = 0;
+			DO_read(DOdata);
+			printf("%s", DOdata);
+			//_delay_ms(1000);
+		}
 		// The next few lines test the UART interface.  Uncomment the UARTE0 line below to test.
 		// Echo the received character:  with a terminal window open on your PC,
 		// you should see everything you type echoed back to the terminal window
-		USARTE0_TransmitByte(USARTE0_ReceiveByte());
+		//USARTE0_TransmitByte(USARTE0_ReceiveByte());
 	}
 	return(0);
 }
@@ -142,8 +144,7 @@ int main(void)
 *********************************************************************************
 ********************************************************************************/
 
-ISR(TWIE_TWIM_vect)  // TWIE Master Interrupt vector.
+/*ISR(TWIE_TWIM_vect)  // TWIE Master Interrupt vector.
 {
 	TWI_MasterInterruptHandler(&twiMaster);
-}
-
+}*/
