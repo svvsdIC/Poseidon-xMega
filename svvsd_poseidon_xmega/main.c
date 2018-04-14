@@ -73,6 +73,10 @@ int main(void)
 	
 	// Configure the hardware, pins, and interrupt levels for the TWI I/F on Port E
 	TWIE_initialization();
+	
+	// Troubleshooting DO sensor
+	xmega_RGBsensor_init();
+	// DO_initialization();
 
 	//blink an LED for the fun of it....
 	ClearBit(xplained_red_LED_port, xplained_red_LED);
