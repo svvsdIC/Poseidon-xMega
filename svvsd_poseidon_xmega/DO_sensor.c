@@ -29,6 +29,7 @@ void DO_initialization(void)
 	// a. Factory reset and check response
 	strncpy(&TWIEsendBuffer[0], &DO_factory_reset, 7);
 	TWI_MasterWriteRead(&twiMaster, DO_sensor_address, &TWIEsendBuffer[0],7,0);
+	strncpy(&TWIEsendBuffer[0], &DO_factory_reset, 7);
 	_delay_ms(600); 
 	
 // 	if(twiMaster.readData[0] == 1)
