@@ -22,6 +22,7 @@
 #include "clocks_and_counters.h"
 #include "xmega_uarte0.h"
 #include "gpio.h"
+#include "FakeSensor1.h"
 //#include "motors.h"
 #include "ADC.h"
 

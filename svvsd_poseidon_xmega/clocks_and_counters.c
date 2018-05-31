@@ -121,20 +121,20 @@ void timer_counter_C0_C1_D0_init(uint16_t topcount) {
 	PORTD_DIR=0b00000111;
 	//
 	// Set the clock prescaler to 64.  From table 14-3:
-	TCC0_CTRLA = TC_CLKSEL_DIV64_gc;
-	TCC1_CTRLA = TC_CLKSEL_DIV64_gc;
-	TCD0_CTRLA = TC_CLKSEL_DIV64_gc;
+	TCC0_CTRLA = TC_TC0_CLKSEL_DIV64_gc;
+	TCC1_CTRLA = TC_TC1_CLKSEL_DIV64_gc;
+	TCD0_CTRLA = TC_TC0_CLKSEL_DIV64_gc;
 	//
 	// Enable the compare enable functions: See 14.12.2
 	// Set WGM=0b011, which is single slope PWM.  See 14.12.2
-	TCC0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | TC_WGMODE_SINGLESLOPE_gc;
-	TCC1_CTRLB = TC1_CCAEN_bm | TC1_CCBEN_bm | TC_WGMODE_SINGLESLOPE_gc;
-	TCD0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm | TC0_CCCEN_bm | TC0_CCDEN_bm | TC_WGMODE_SINGLESLOPE_gc;
+	TCC0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | TC_TC0_WGMODE_SINGLESLOPE_gc;
+	TCC1_CTRLB = TC1_CCAEN_bm | TC1_CCBEN_bm | TC_TC1_WGMODE_SINGLESLOPE_gc;
+	TCD0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm | TC0_CCCEN_bm | TC0_CCDEN_bm | TC_TC0_WGMODE_SINGLESLOPE_gc;
 	//
 	// Ensure event actions are turned OFF
-	TCC0_CTRLD = TC_EVACT_OFF_gc | TC_EVSEL_OFF_gc;
-	TCC1_CTRLD = TC_EVACT_OFF_gc | TC_EVSEL_OFF_gc;
-	TCD0_CTRLD = TC_EVSEL_OFF_gc | TC_EVACT_OFF_gc;
+	TCC0_CTRLD = TC_TC0_EVACT_OFF_gc | TC_TC0_EVSEL_OFF_gc;
+	TCC1_CTRLD = TC_TC1_EVACT_OFF_gc | TC_TC1_EVSEL_OFF_gc;
+	TCD0_CTRLD = TC_TC0_EVSEL_OFF_gc | TC_TC0_EVACT_OFF_gc;
 	//
 	// Nothing to set in TCCx control registers C, and E.
 	//
@@ -179,14 +179,14 @@ void timer_counter_C0_init(uint16_t topcount) {
 	PORTC_DIR=0b00000111;
 	//
 	// Set the clock prescaler to 64. From table 14-3:
-	TCC0_CTRLA = TC_CLKSEL_DIV64_gc;
+	TCC0_CTRLA = TC_TC0_CLKSEL_DIV64_gc;
 	//
 	// Enable the compare enable functions: See 14.12.2
 	// Set WGM=0b011, which is single slope PWM.  See 14.12.2
-	TCC0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | TC_WGMODE_SINGLESLOPE_gc;
+	TCC0_CTRLB = TC0_CCAEN_bm | TC0_CCBEN_bm  | TC0_CCCEN_bm | TC0_CCDEN_bm | TC_TC0_WGMODE_SINGLESLOPE_gc;
 	//
 	// Ensure event actions are turned OFF
-	TCC0_CTRLD = TC_EVSEL_OFF_gc | TC_EVACT_OFF_gc;
+	TCC0_CTRLD = TC_TC0_EVSEL_OFF_gc | TC_TC0_EVACT_OFF_gc;
 	//
 	// Nothing to set in TCCx control registers C, and E.
 	//
@@ -242,26 +242,26 @@ void timer_counter_C0_init(uint16_t topcount) {
 	// Timer Counters 0 and 1 should now be set up on PORTC
 }
 
-void timer_counter_E0_init() {
+void timer_counter_E0_init(void) {
 	// This routine initializes the 1Hz interrupt.  It does not use any external pins.
 	// THIS IS NOT YET WRITTEN>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
-	// System clock is 32,000,000Hz.  We want to trigeer every second.
+	// System clock is 32,000,000Hz.  We want to trigger every second.
 	// Max count is 65535.  32M/65536=488.  If we divide the clock by 1024, 
 	// we need the top count to be 31250 (0x7A12)
 	// Set the clock prescaler to 1024. From table 14-3:
-	TCE0_CTRLA = TC_CLKSEL_DIV1024_gc;
+	TCE0_CTRLA = TC_TC0_CLKSEL_DIV1024_gc;
 	//
 	// Enable the compare enable functions: See 14.12.2
 	// Set WGM=0b011, which is single slope PWM.  See 14.12.2
-	TCE0_CTRLB = TC_WGMODE_SINGLESLOPE_gc;
+	TCE0_CTRLB = TC_TC0_WGMODE_SINGLESLOPE_gc;
 	//
 	// Ensure event actions are turned OFF
-	TCE0_CTRLD = TC_EVSEL_OFF_gc | TC_EVACT_OFF_gc;
+	TCE0_CTRLD = TC_TC0_EVSEL_OFF_gc | TC_TC0_EVACT_OFF_gc;
 	//
 	// Nothing to set in TCCx control registers C, and E.
 	//
 	// Enable timer interrupt / interrupt level
-	TCE0_INTCTRLA = TC_OVFINTLVL_LO_gc;
+	TCE0_INTCTRLA = TC_TC0_OVFINTLVL_LO_gc;
 	//
 	// Ensure timer/counters are enabled for port C (See 8.7.3)
 	ClearBit(PR_PRPC, PR_TC0_bp);

@@ -37,5 +37,6 @@
 void system_clock_init(void); 
 void timer_counter_C0_C1_D0_init(uint16_t topcount);
 void timer_counter_F0_init(uint16_t topcount);
+void timer_counter_E0_init(void);
 
 #endif /* CLOCKS_AND_COUNTERS_H_ */
