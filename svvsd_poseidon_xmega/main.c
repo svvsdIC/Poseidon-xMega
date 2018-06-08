@@ -35,9 +35,11 @@
 volatile unsigned char temp1;
 //Test string to verify UART is working
 char String[]="Hello World!! The serial port is working!";
+char DOdata[32];
 // This next line opens a virtual file that writes to the serial port
 static FILE mystdout = FDEV_SETUP_STREAM(USARTE0_Transmit_IO, NULL, _FDEV_SETUP_WRITE);
-extern uint8_t ItsTime;
+extern volatile uint8_t ItsTime;
+uint16_t seconds;
 
 
 /********************************************************************************
@@ -51,7 +53,8 @@ extern uint8_t ItsTime;
 int main(void)
 {
 	// DEBUG: Provide some data to print out...(erase these lines when done testing)
-	uint16_t u16data = 10;
+	//uint16_t u16data = 10;
+	ItsTime = 0;
 	
 	// Set up the serial interface output file (to computer)
 	stdout = &mystdout;
@@ -64,6 +67,9 @@ int main(void)
 	
 	//Set up the timers and counters to control ESCs and Servos
 	timer_counter_C0_C1_D0_init(ESC_TOP_COUNT);
+	
+	//Set up the 1Hz interrupt
+	timer_counter_E0_init();
 	
 	//Set up the general purpose IO pins
 	GPIO_init();
@@ -85,8 +91,12 @@ int main(void)
 	
 	// enable global interrupts
 	sei();
-	// Now set up the RGB sensor (Used for debug)
-	// xmega_RGBsensor_init();
+	//
+	// Initialize the fake sensors used to drive the PI interface
+	DO_init();
+	//
+	// Now set up the RGB sensor
+	xmega_RGBsensor_init();
 	// If we survived that, we're ready for the main loop
 	
 	//but first some UART set up
@@ -120,10 +130,25 @@ int main(void)
 	// *************************************************************************
 	while (1) 
 	{
+		//Wait for the 1Hz interrupt...
+		if (ItsTime == 1){ //wait for our 1Hz flag
+			ItsTime = 0; 
+			seconds++;
+			printf("\nSeconds = %u", seconds);
+			DO_read(DOdata);
+			printf("\n%s", DOdata);
+			TWI_XFER_STATUS = xmega_read_RGB_values();
+			printf("\nraw clear = %u", raw_clear);
+			printf("\nraw red   = %u", raw_red);
+			printf("\nraw green = %u", raw_green);
+			printf("\nraw blue  = %u", raw_blue);
+			printf("\n=================");
+		} else {}
+		
 		// The next few lines test the UART interface.  Uncomment the UARTE0 line below to test.
 		// Echo the received character:  with a terminal window open on your PC,
 		// you should see everything you type echoed back to the terminal window
-		USARTE0_TransmitByte(USARTE0_ReceiveByte());
+		//USARTE0_TransmitByte(USARTE0_ReceiveByte());
 	}
 	return(0);
 }
@@ -138,4 +163,3 @@ ISR(TWIE_TWIM_vect)  // TWIE Master Interrupt vector.
 {
 	TWI_MasterInterruptHandler(&twiMaster);
 }
-
