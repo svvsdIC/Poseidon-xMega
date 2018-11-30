@@ -13,7 +13,7 @@
  *
  *****************************************************************************/
 // The following line has been moved into the compiler symbols (Project->properties->toolchain)
-//#define F_CPU 32000000UL		// set CPU variable so delays are correct
+#define F_CPU 32000000UL		// set CPU variable so delays are correct
 /********************************************************************************
 						Includes
 ********************************************************************************/
@@ -22,6 +22,7 @@
 #include "twi_master_driver.h"
 #include "twiForPoseidon.h"
 #include "colorSensor.h"
+#include "FakeSensor1.h"
 #include "clocks_and_counters.h"
 #include "xmega_uarte0.h"
 
@@ -35,6 +36,7 @@
 volatile unsigned char temp1;
 //Test string to verify UART is working
 char String[]="Hello World!! The serial port is working!";
+char DOdata[32];
 // This next line opens a virtual file that writes to the serial port
 static FILE mystdout = FDEV_SETUP_STREAM(USARTE0_Transmit_IO, NULL, _FDEV_SETUP_WRITE);
 extern uint8_t ItsTime;
@@ -73,10 +75,6 @@ int main(void)
 	
 	// Configure the hardware, pins, and interrupt levels for the TWI I/F on Port E
 	TWIE_initialization();
-	
-	// Troubleshooting DO sensor
-	xmega_RGBsensor_init();
-	// DO_initialization();
 
 	//blink an LED for the fun of it....
 	ClearBit(xplained_red_LED_port, xplained_red_LED);
@@ -89,7 +87,15 @@ int main(void)
 	
 	// enable global interrupts
 	sei();
-	// Now set up the RGB sensor (Used for debug)
+	//
+	// Initialize the fake sensors used to drive the PI interface
+	DO_init();
+	//
+	// Test read the DO sensor
+	DO_read(DOdata);
+	printf("%s\n", DOdata);
+	//
+	// Now set up the RGB sensor
 	// xmega_RGBsensor_init();
 	// If we survived that, we're ready for the main loop
 	

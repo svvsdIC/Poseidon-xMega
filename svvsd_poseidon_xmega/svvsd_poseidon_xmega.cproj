@@ -36,7 +36,7 @@
   <documentation help="" />
   <offline-documentation help="" />
   <dependencies>
-    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.26.0" />
+    <content-extension eid="atmel.asf" uuidref="Atmel.ASF" version="3.27.0" />
   </dependencies>
 </framework-data>
     </AsfFrameworkConfig>
@@ -141,10 +141,10 @@
     <Compile Include="colorSensor.h">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="DO_sensor.c">
+    <Compile Include="FakeSensor1.c">
       <SubType>compile</SubType>
     </Compile>
-    <Compile Include="DO_sensor.h">
+    <Compile Include="FakeSensor1.h">
       <SubType>compile</SubType>
     </Compile>
     <Compile Include="gpio.c">
